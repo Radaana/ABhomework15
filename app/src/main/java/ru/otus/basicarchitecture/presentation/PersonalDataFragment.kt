@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
@@ -78,14 +79,29 @@ class PersonalDataFragment : Fragment() {
 
             datePicker.addOnPositiveButtonClickListener {
                 Log.d("TAG", it.toString())
-                viewModel.date.value = it
-                view.findViewById<TextView>(R.id.dateInput).text = Utils.dateFormatter.format(Date(it))
+                viewModel.saveBirthDate(it)
+                view.findViewById<TextView>(R.id.dateInput).text =
+                    Utils.dateFormatter.format(Date(it))
             }
 
             datePicker.show(parentFragmentManager, null)
         }
 
-        view.findViewById<Button>(R.id.nextToAddress).setOnClickListener {
+        val nextButton = view.findViewById<Button>(R.id.nextToAddress)
+
+        viewModel.isDateValid.observe(viewLifecycleOwner) {
+            if(viewModel.isDateValid.value == false) {
+                Toast.makeText(
+                    requireActivity(),
+                    "You must be over 18 to proceed",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            nextButton.isEnabled = viewModel.isDateValid.value == true
+        }
+
+
+        nextButton.setOnClickListener {
             viewModel.saveToCash()
 
             parentFragmentManager.beginTransaction()
