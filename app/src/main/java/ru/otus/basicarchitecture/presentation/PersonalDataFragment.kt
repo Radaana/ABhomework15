@@ -78,7 +78,6 @@ class PersonalDataFragment : Fragment() {
                     .build()
 
             datePicker.addOnPositiveButtonClickListener {
-                Log.d("TAG", it.toString())
                 viewModel.saveBirthDate(it)
                 view.findViewById<TextView>(R.id.dateInput).text =
                     Utils.dateFormatter.format(Date(it))
